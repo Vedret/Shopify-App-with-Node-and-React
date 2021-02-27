@@ -50,6 +50,8 @@ app.prepare().then(() => {
       ctx.respond = false;
       ctx.res.statusCode = 200;
     };
+
+    
   
     router.get('(.*)', handleRequest);
   
