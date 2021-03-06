@@ -8,7 +8,7 @@ import '@shopify/polaris/dist/styles.css';
 import translations from '@shopify/polaris/locales/en.json';
 import ClientRouter from '../components/ClientRouter';
 import ApolloClient from 'apollo-boost';
-mport { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from 'react-apollo';
 
 class MyProvider extends React.Component {
   static contextType = Context;
