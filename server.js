@@ -30,6 +30,7 @@ Shopify.Context.initialize({
   
 });
 
+
 const ACTIVE_SHOPIFY_SHOPS = {};
 
 app.prepare().then(() => {
@@ -40,7 +41,11 @@ app.prepare().then(() => {
     server.use(
         createShopifyAuth({
           afterAuth(ctx) {
-            ctx.redirect(`/`);
+            const { shop, scope } = ctx.state.shopify;
+            ACTIVE_SHOPIFY_SHOPS[shop] = scope;
+
+            ctx.redirect(`/?shop=${shop}`);
+     
           },
         }),
       );
@@ -51,9 +56,22 @@ app.prepare().then(() => {
       ctx.res.statusCode = 200;
     };
 
-    
+    router.get("/", async (ctx) => {
+      const shop = ctx.query.shop;
   
-    router.get('(.*)', handleRequest);
+      if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
+        ctx.redirect(`/auth?shop=${shop}`);
+      } else {
+        await handleRequest(ctx);
+      }
+    });
+
+   
+
+    
+    router.get("(/_next/static/.*)", handleRequest);
+    router.get("/_next/webpack-hmr", handleRequest);
+    router.get("(.*)", verifyRequest(), handleRequest);
   
     server.use(router.allowedMethods());
     server.use(router.routes());
