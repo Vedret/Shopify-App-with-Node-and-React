@@ -9,6 +9,7 @@ import translations from '@shopify/polaris/locales/en.json';
 import ClientRouter from '../components/ClientRouter';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
+import Cookies from 'js-cookie';
 
 class MyProvider extends React.Component {
   static contextType = Context;
@@ -31,12 +32,11 @@ class MyProvider extends React.Component {
   }
 }
 
-
 class MyApp extends App {
   render() {
     const { Component, pageProps, shopOrigin } = this.props;
-    const config = {apiKey: API_KEY , shopOrigin, forceRedirect: true };
-    console.log(config);
+
+    const config = { apiKey: API_KEY, shopOrigin: Cookies.get('shopOrigin'), forceRedirect: true };
     return (
       <React.Fragment>
         <Head>
@@ -44,22 +44,22 @@ class MyApp extends App {
           <meta charSet="utf-8" />
         </Head>
         <Provider config={config}>
-        <ClientRouter />
-        <AppProvider i18n={translations}>
-        <MyProvider>
-        <Component {...pageProps} />
-        </MyProvider>
-        </AppProvider>
+          <ClientRouter />
+          <AppProvider i18n={translations}>
+            <MyProvider>
+              <Component {...pageProps} />
+            </MyProvider>
+          </AppProvider>
         </Provider>
       </React.Fragment>
     );
   }
 }
+
 MyApp.getInitialProps = async ({ ctx }) => {
   return {
     shopOrigin: ctx.query.shop,
   }
 }
-export default MyApp;
 
-//HTTPS://4a1611c45bb1.ngrok.io/auth?shop=mak-pick.myshopify.com
+export default MyApp;

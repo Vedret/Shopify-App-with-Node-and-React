@@ -43,7 +43,11 @@ app.prepare().then(() => {
           afterAuth(ctx) {
             const { shop, scope } = ctx.state.shopify;
             ACTIVE_SHOPIFY_SHOPS[shop] = scope;
-
+            ctx.cookies.set('shopOrigin', shop, {
+              httpOnly: false,
+              secure: true,
+              sameSite: 'none'
+            });
             ctx.redirect(`/?shop=${shop}`);
      
           },
